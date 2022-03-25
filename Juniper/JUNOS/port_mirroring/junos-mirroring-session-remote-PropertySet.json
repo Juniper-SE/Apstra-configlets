@@ -1,0 +1,11 @@
+{
+    "id": "62232140-50fe-4136-865f-3e6fe5a78741", 
+    "created_at": "2022-03-25T11:47:21.097883+0000", 
+    "values": {
+        "r_output_if": "10.250.0.1", 
+        "r_input_ingress_if": "xe-0/0/5.0", 
+        "r_input_egress_if": "xe-0/0/5.0"
+    }, 
+    "updated_at": "2022-03-25T11:47:21.097883+0000", 
+    "label": "JUNOS Mirroring Session Remote"
+}

@@ -1,0 +1,11 @@
+{
+    "id": "fea54013-6a52-45d0-b15d-91da61697a41", 
+    "created_at": "2022-03-25T10:57:41.764251+0000", 
+    "values": {
+        "output_if": "xe-0/0/10.0", 
+        "input_egress_if": "xe-0/0/5.0", 
+        "input_ingress_if": "xe-0/0/5.0"
+    }, 
+    "updated_at": "2022-03-25T11:47:35.849185+0000", 
+    "label": "JUNOS Mirroring Session Local"
+}

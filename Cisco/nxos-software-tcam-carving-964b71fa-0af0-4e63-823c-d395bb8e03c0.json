@@ -1,0 +1,18 @@
+{
+    "ref_archs": [
+        "two_stage_l3clos"
+    ], 
+    "created_at": "2022-03-25T01:18:35.532181Z", 
+    "last_modified_at": "2022-03-25T01:18:35.532181Z", 
+    "generators": [
+        {
+            "config_style": "nxos", 
+            "section": "system_top", 
+            "template_text": "hardware access-list tcam region vacl 0\nhardware access-list tcam region racl 256\nhardware access-list tcam region arp-ether 256 double-wide", 
+            "negation_template_text": "no hardware access-list tcam region arp-ether 256 double-wide\nno hardware access-list tcam region racl 256\nno hardware access-list tcam region vacl 0", 
+            "filename": ""
+        }
+    ], 
+    "display_name": "NXOS Software TCAM Carving", 
+    "id": "964b71fa-0af0-4e63-823c-d395bb8e03c0"
+}
