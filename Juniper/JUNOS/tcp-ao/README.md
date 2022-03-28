@@ -1,7 +1,6 @@
 #  tcp-ao junos configlet area.
 
-The junos documenatation for configlets is in the following link:
-https://www.juniper.net/documentation/us/en/software/junos/transport-ip/topics/topic-map/tcp-configure-ao-bgp-ldp.html
+The junos documenatation for configlets is in [the following link](https://www.juniper.net/documentation/us/en/software/junos/transport-ip/topics/topic-map/tcp-configure-ao-bgp-ldp.html)
 
 Here is an [APNIC article](https://blog.apnic.net/2021/07/28/its-time-to-replace-md5-with-tcp-ao/) 
 
