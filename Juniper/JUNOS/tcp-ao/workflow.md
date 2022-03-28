@@ -21,5 +21,6 @@ To deploy tcp-ao with junos devices follow the following workflow.
      set protocols bgp group l3clos-l-evpn authentication-key-chain JPW-Chain 
       - bgp neighbor level (the unique neighbors you select)
 3. you may want to assign the keys to the underlay, overlay or both layers of the blueprint.
+
     
 
