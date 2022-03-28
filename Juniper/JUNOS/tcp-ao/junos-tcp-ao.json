@@ -1,0 +1,25 @@
+{
+    "ref_archs": [
+        "two_stage_l3clos"
+    ], 
+    "created_at": "2022-03-23T17:17:59.426180Z", 
+    "last_modified_at": "2022-03-23T18:59:38.204080Z", 
+    "generators": [
+        {
+            "config_style": "junos", 
+            "section": "system", 
+            "template_text": "security {\n    authentication-key-chains {\n        key-chain JPW-Chain {\n            key 0 {\n                secret \"$9$MjEL7Vji.m5FDik.PfzFcyrvX7\"; ## SECRET-DATA\n                start-time \"2022-3-23.16:45:00 +0000\";\n                algorithm ao;\n                ao-attribute {\n                    send-id 0;\n                    recv-id 0;\n                    tcp-ao-option enabled;\n                    cryptographic-algorithm aes-128-cmac-96;\n                }\n            }\n        }\n    }\n}\n", 
+            "negation_template_text": "", 
+            "filename": ""
+        }, 
+        {
+            "config_style": "junos", 
+            "section": "set_based_system", 
+            "template_text": "set protocols bgp group l3clos-l-evpn authentication-algorithm ao\nset protocols bgp group l3clos-l-evpn authentication-key-chain JPW-Chain", 
+            "negation_template_text": "", 
+            "filename": ""
+        }
+    ], 
+    "display_name": "junos-tcp-ao", 
+    "id": "73b7f9da-bbb9-44a8-9883-fe580fff27da"
+}
