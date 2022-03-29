@@ -1,5 +1,0 @@
-protocols evpn {
-	duplicate-mac-detection {
-		auto-recovery-time 22;
-	}
-}
