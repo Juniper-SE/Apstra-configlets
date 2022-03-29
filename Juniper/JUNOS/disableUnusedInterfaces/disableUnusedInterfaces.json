@@ -1,0 +1,9 @@
+{% for if_name,if_param in interface.items() %}
+  {% if if_param['description'] == "" %}
+interfaces {
+    {{if_param['intfName']}} {
+        disable;
+   }
+}
+  {% endif %}
+{% endfor %}
