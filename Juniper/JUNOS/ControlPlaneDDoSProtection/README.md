@@ -1,0 +1,1 @@
+Examples for Configuring Control Plane DDoS Protection on QFX Series Switches can be found here: https://www.juniper.net/documentation/us/en/software/junos/security-services/topics/example/ddos-example-qfx-series.html
