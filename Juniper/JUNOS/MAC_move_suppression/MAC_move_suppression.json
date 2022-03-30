@@ -1,0 +1,9 @@
+protocols {
+    evpn {
+        duplicate-mac-detection {
+            detection-threshold 6;
+            detection-window 180;
+            auto-recovery-time 5;
+        }
+    }
+}
