@@ -1,2 +1,0 @@
-set system ddos-protection protocols vxlan aggregate bandwidth 1000
-set system ddos-protection protocols vxlan aggregate burst 400
