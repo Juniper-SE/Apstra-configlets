@@ -1,9 +1,15 @@
-protocols {
-    evpn {
-        duplicate-mac-detection {
-            detection-threshold 6;
-            detection-window 180;
-            auto-recovery-time 5;
+{
+    "ref_archs": [
+        "two_stage_l3clos"
+    ],
+    "generators": [
+        {
+            "config_style": "junos",
+            "section": "set_based_system",
+            "template_text": "set protocols evpn duplicate-mac-detection detection-threshold 6 detection-window 180 auto-recovery-time 5\n",
+            "negation_template_text": "",
+            "filename": ""
         }
-    }
+    ],
+    "display_name": "MAC_move_suppression"
 }
