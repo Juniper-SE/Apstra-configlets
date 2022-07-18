@@ -8,3 +8,9 @@
 # Second: tag the interface you want to apply the config in the configlet
 
 ![tagged interfaces image](./images/taggedLinks.png "Tagged Links")
+
+
+# Third: Import the configlet into the BP Catalogue
+
+
+![import to catalogue](./images/ImportingConfiglet.png "import to catalogue")
