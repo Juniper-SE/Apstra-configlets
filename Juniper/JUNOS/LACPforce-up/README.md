@@ -10,7 +10,7 @@
 ![tagged interfaces image](./images/taggedLinks.png "Tagged Links")
 
 
-# Third: Import the configlet into the BP Catalogue
+# Third: Import the configlet into the BP Catalogue and assign it to the interfaces where the 'forceup' tag has been assigned
 
 
 ![import to catalogue](./images/ImportingConfiglet.png "import to catalogue")
