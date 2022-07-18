@@ -3,8 +3,8 @@
 
 # First create the configlet itself
 
-![Configlet](/images/Configlet.png "ForceUp Configlet")
+![Configlet](./images/Configlet.png "ForceUp Configlet")
 
 # Second: tag the interface you want to apply the config in the configlet
 
-![tagged interfaces image](/images/taggedLinks.png "Tagged Links")
+![tagged interfaces image](./images/taggedLinks.png "Tagged Links")
