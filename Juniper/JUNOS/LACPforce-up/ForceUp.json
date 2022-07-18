@@ -1,0 +1,7 @@
+ether-options {
+         802.3ad {
+               lacp {
+                force-up;
+                }
+         }
+}
