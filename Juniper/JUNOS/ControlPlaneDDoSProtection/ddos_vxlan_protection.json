@@ -8,10 +8,10 @@
         {
             "config_style": "junos",
             "section": "set_based_system",
-            "template_text": "set forwarding-options hash-key family inet layer-4\n",
+            "template_text": "set system ddos-protection protocols vxlan aggregate bandwidth 1000\nset system ddos-protection protocols vxlan aggregate burst 400\n",
             "negation_template_text": "",
             "filename": ""
         }
     ],
-    "display_name": "QFX10K-HashingFix"
+    "display_name": "DDOS_vxlan_protection"
 }

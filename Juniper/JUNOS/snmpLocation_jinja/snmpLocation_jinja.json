@@ -1,0 +1,15 @@
+{
+    "ref_archs": [
+        "two_stage_l3clos"
+    ],
+    "generators": [
+        {
+            "config_style": "junos",
+            "section": "system",
+            "template_text": "{% set snmp_location = {} %}\n{% set test = snmp_location.update({'Leaf-30': 'DC1-Rack30'}) %}\n{% set test = snmp_location.update({'Leaf-31': 'DC1-Rack31'}) %}\n{% set test = snmp_location.update({'Leaf-32': 'DC1-Rack32'}) %}\n{% set test = snmp_location.update({'Leaf-33': 'DC1-Rack33'}) %}\n{% set test = snmp_location.update({'Leaf-34': 'DC2-Rack34'}) %}\n{% set test = snmp_location.update({'Leaf-35': 'DC2-Rack35'}) %}\n \n{% if snmp_location[hostname] is defined %}\nsnmp {\n    location \"{{snmp_location[hostname]}}\";\n}\n{% endif %}",
+            "negation_template_text": "",
+            "filename": ""
+        }
+    ],
+    "display_name": "junos-snmp-location-jinja"
+}

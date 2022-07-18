@@ -1,12 +1,9 @@
 {
-    "id": "64435bc1-005c-43e4-96ea-0ebd7a1bf822", 
-    "created_at": "2022-03-28T19:13:13.181385+0000", 
     "values": {
         "re1_ipv4inet_master": " 192.168.0.50/24", 
         "re0_ipv4inet": " 192.168.0.51/24", 
         "re1_ipv4inet": " 192.168.0.52/24", 
         "re0_ipv4inet_master": " 192.168.0.50/24"
     }, 
-    "updated_at": "2022-03-28T19:13:13.181385+0000", 
     "label": "dualRE_PropertySet"
 }

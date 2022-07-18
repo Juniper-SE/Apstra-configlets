@@ -1,0 +1,15 @@
+{
+    "ref_archs": [
+        "two_stage_l3clos"
+    ],
+    "generators": [
+        {
+            "config_style": "junos",
+            "section": "system",
+            "template_text": "protocols {\n    sflow {\n        polling-interval 5;\n        source-ip {{management_ip}};\n        sample-rate {\n            ingress 1000;\n            egress 1000;\n        }\n        collector 10.10.10.2 {\n            udp-port 6343;\n        }\n        interfaces xe-0/0/0.0;\n        interfaces xe-0/0/1.0;\n        interfaces xe-0/0/2.0;\n        interfaces xe-0/0/3.0;\n        interfaces xe-0/0/4.0;\n        interfaces xe-0/0/5.0;\n        interfaces xe-0/0/6.0;\n        interfaces xe-0/0/7.0;\n        interfaces xe-0/0/8.0;\n        interfaces xe-0/0/9.0;\n        interfaces xe-0/0/10.0;\n        interfaces xe-0/0/11.0;\n    }\n}\nrouting-options {\n    static {\n        route 10.10.10.2/32 next-table mgmt_junos.inet.0;\n    }\n}\n",
+            "negation_template_text": "",
+            "filename": ""
+        }
+    ],
+    "display_name": "junos_sflow"
+}

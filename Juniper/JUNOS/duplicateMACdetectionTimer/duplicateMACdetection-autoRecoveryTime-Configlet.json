@@ -1,5 +1,15 @@
-protocols evpn {
-	duplicate-mac-detection {
-		auto-recovery-time 22;
-	}
+{
+    "ref_archs": [
+        "two_stage_l3clos"
+    ],
+    "generators": [
+        {
+            "config_style": "junos",
+            "section": "set_based_system",
+            "template_text": "set protocols evpn duplicate-mac-detection auto-recovery-time 22\n",
+            "negation_template_text": "",
+            "filename": ""
+        }
+    ],
+    "display_name": "junos-duplicateMACdetection"
 }
