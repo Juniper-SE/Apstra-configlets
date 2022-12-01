@@ -1,0 +1,116 @@
+policy-options {
+  prefix-list MANAGEMENT {
+{%- for net in mgmt_network.split(',') -%}
+  {{ net }};
+{% endfor %}
+  }
+  prefix-list BGP {
+  {% for peer, peer_info in bgp_sessions.items() %}
+    {{peer_info.dest_ip}};
+  {% endfor %}
+  }
+  prefix-list RADIUS {
+    {{radius_svr_1}};
+    {{radius_svr_2}};
+  }
+  prefix-list NTP {
+    {{ntp_svr_1}};
+    {{ntp_svr_2}};
+  }
+  prefix-list APSTRA {
+    {{apstra_svr}};
+  }
+}
+firewall {
+  filter PROTECT-RE {
+    term MANAGEMENT_ACCESS {
+      from {
+        source-prefix-list {
+          MANAGEMENT;
+        }
+        protocol tcp;
+        port ssh;
+      }
+      then {
+        accept;
+      }
+    }
+    term APSTRA_MANAGEMENT {
+      from {
+        source-prefix-list {
+          APSTRA;
+        }
+        protocol tcp;
+        port 830;
+      }
+    }
+    term BGP {
+      from {
+        source-prefix-list {
+          BGP;
+        }
+        protocol tcp;
+        port bgp;
+      }
+      then {
+        accept;
+      }
+    }
+    term RADIUS {
+      from {
+        source-prefix-list {
+          RADIUS;
+        }
+        protocol tcp;
+        port radius;
+      }
+      then {
+        accept;
+      }
+    }
+    term NTP {
+      from {
+        source-prefix-list {
+          NTP;
+        }
+        protocol udp;
+        port ntp;
+      }
+      then {
+        accept;
+      }
+    }
+    term DENY_ICMP_FRAG {
+      from {
+        protocol icmp;
+        is-fragment;
+      }
+      then {
+        discard;
+      }
+    }
+    term ICMP {
+      from {
+        protocol icmp;
+      }
+      then {
+        accept;
+      }
+    }
+    term DENY {
+      then {
+        discard;
+        log;
+      }
+    }
+  }
+}
+interfaces lo0 {
+  unit 0 {
+    family inet {
+      filter {
+        input PROTECT-RE;
+      }
+    }
+  }
+}

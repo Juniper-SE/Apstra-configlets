@@ -1,0 +1,13 @@
+chassis {
+    redundancy {
+        graceful-switchover;
+    }
+    disk-partition /var {
+        level full {
+            free-space 10 percent;
+        }
+        level high {
+            free-space 20 percent;
+        }
+    }
+}

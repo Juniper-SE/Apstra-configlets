@@ -1,0 +1,23 @@
+vlans {
+    disabled_vlan {
+        vlan-id 789;
+    }
+}
+
+{% for int, int_info in interface.items() %}
+{% if int_info.role == "unused" %}
+interfaces {
+  replace: {{ int_info.intfName }} {
+    disable;
+    unit 0 {
+      family ethernet-switching {
+        interface-mode access;
+        vlan {
+          members disabled_vlan;
+        }
+      }
+    }
+  }
+}
+{% endif %}
+{% endfor %}

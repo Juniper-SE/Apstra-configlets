@@ -1,0 +1,11 @@
+system {
+    ntp {
+        authentication-key 1 type sha256 value {{ntp_key_1}}; 
+        authentication-key 2 type sha1 value {{ntp_key_2}}; 
+        server 172.16.0.1;
+        server {{ntp_svr_1}} key 1 prefer;
+        server {{ntp_svr_2}} key 2;
+        trusted-key [ 1 2 ];
+        source-address {{management_ip}};
+    }
+}

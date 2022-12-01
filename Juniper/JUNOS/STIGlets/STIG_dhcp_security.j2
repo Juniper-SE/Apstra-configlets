@@ -1,0 +1,12 @@
+{% for vlan, vlan_info in vlan.items() %}
+vlans {
+  vn{{vlan_info.id}} {
+    forwarding-options {
+      dhcp-security {
+        arp-inspection;
+        ip-source-guard;
+      }
+    }
+  }
+}
+{% endfor %}

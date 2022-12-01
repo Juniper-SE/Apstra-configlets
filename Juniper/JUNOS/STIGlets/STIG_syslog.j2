@@ -1,0 +1,33 @@
+system {
+  time-zone UTC;
+  syslog {
+    file security-log {
+      security info;
+      structured-data;
+      archive size 2097152;
+      archive files 2;
+      archive transfer-interval 1440;
+      archive archive-sites {
+        "sftp://backup@{{archive_url}}" password {{archive_key}};
+      }
+    }
+    file firewall-log {
+      firewall info;
+      structured-data;
+    }
+    file auth-log {
+      authorization info;
+      structured-data;
+    }
+    file change-log {
+      change-log info;
+      structured-data;
+    }
+  host {{syslog_svr}} {
+    source-address {{management_ip}};
+    any info;
+    structured-data;
+    }
+  routing-instance mgmt_junos;
+  }
+}

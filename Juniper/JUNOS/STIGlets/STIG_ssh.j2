@@ -1,0 +1,14 @@
+system {
+  services {
+    ssh {
+      connection-limit 10;
+      max-sessions-per-connection 5;
+      protocol-version v2;
+      macs [hmac-sha2-256 hmac-sha2-512];
+      ciphers [aes192-cbc aes256-cbc aes192-ctr aes256-ctr];
+      key-exchange [ecdh-sha2-nistp521 ecdh-sha2-nistp384];
+      client-alive-count-max 3;
+      client-alive-interval 360;
+    }
+  }
+}
