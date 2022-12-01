@@ -1,0 +1,45 @@
+groups {
+  stig_bgp_auth{
+    security {
+      authentication-key-chains {
+        key-chain bgp_auth {
+          key 1 {
+            secret {{ key_1 }};
+            start-time "2022-9-14.00:00:00 +0000";
+          }
+          key 2 {
+            secret {{key_2}};
+            start-time "2022-10-14.00:00:00 +0000";
+          }
+          key 3 {
+            secret {{key_3}};
+            start-time "2022-11-14.00:00:00 +0000";
+          }
+          key 4 {
+            secret {{key_4}};
+            start-time "2022-12-14.00:00:00 +0000";
+          }
+          key 5 {
+            secret {{key_5}};
+            start-time "2023-01-14.00:00:00 +0000";
+          }
+          key 6 {
+            secret {{key_6}};
+            start-time "2023-02-14.00:00:00 +0000";
+          }
+          key 7 {
+            secret {{key_7}};
+            start-time "2023-03-14.00:00:00 +0000";
+          }
+        }
+      }
+    }
+    protocols bgp {
+      group <*> {
+        authentication-key-chain bgp_auth;
+        authentication-algorithm hmac-sha-1-96;
+      }
+    }
+  }
+}
+apply-groups stig_bgp_auth;

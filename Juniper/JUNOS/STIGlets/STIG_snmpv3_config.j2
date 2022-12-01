@@ -1,0 +1,47 @@
+snmp {
+    v3 {
+        vacm {
+            security-to-group {
+                security-model usm {
+                    security-name {{hostname}} {
+                        group SNMPV3GROUP;
+                    }
+                }
+            }
+            access {
+                group SNMPV3GROUP {
+                    default-context-prefix {
+                        security-model any {
+                            security-level none {
+                                read-view SNMPVIEW;
+                                write-view SNMPVIEW;
+                            }
+                            security-level authentication {
+                                read-view SNMPVIEW;
+                                write-view SNMPVIEW;
+                            }
+                            security-level privacy {
+                                read-view SNMPVIEW;
+                                write-view SNMPVIEW;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        management-routing-instance mgmt_junos;
+    }
+    engine-id {                         
+        local {{management_ip}};
+    }
+    view SNMPVIEW {
+        oid .1 include;
+    }
+    routing-instance-access;
+    health-monitor {
+        interval 300;
+        rising-threshold 75;
+        falling-threshold 74;
+    }
+
+}

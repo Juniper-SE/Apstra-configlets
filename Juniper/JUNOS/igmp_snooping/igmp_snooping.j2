@@ -1,0 +1,9 @@
+{% for vlan, vlan_info in vlan.items() %}
+{% if 'mcast' in vlan_info.name %}
+protocols {
+  igmp-snooping {
+    vlan vn{{ vlan_info.id }} 
+  }
+}
+{% endif %}
+{% endfor %}

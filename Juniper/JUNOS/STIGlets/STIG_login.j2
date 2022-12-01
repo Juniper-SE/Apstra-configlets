@@ -1,0 +1,50 @@
+system {
+  login {
+    message "You are accessing a U.S. Government (USG) Information System (IS) that is provided\nfor USG-authorized use only.\n\nBy using this IS (which includes any device attached to this IS), you consent to the\nfollowing conditions:\n\n-The USG routinely intercepts and monitors communications on this IS for purposes\nincluding, but not limited to, penetration testing, COMSEC monitoring, network\noperations and defense, personnel misconduct (PM), law enforcement (LE), and\ncounterintelligence (CI) investigations.\n\n-At any time, the USG may inspect and seize data stored on this IS.\n\n-Communications using, or data stored on, this IS are not private, are subject to routine\nmonitoring, interception, and search, and may be disclosed or used for any USG-\nauthorized purpose.\n\n-This IS includes security measures (e.g., authentication and access controls) to protect\nUSG interests--not for your personal benefit or privacy.\n\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI\ninvestigative searching or monitoring of the content of privileged communications, or\nwork product, related to personal representation or services by attorneys,\npsychotherapists, or clergy, and their assistants.  Such communications and work product\nare private and confidential.  See User Agreement for details.";
+    password {
+      format sha512;
+      minimum-length 15;
+      minimum-upper-cases 1;
+      minimum-lower-cases 1;
+      minimum-numerics 1;
+      minimum-punctuations 1;
+    }
+    class AUDITOR {
+      idle-timeout 10;
+      permissions [configure view-configuration];
+      allow-configuration "(system syslog)";
+    }
+    class SR_ENGINEER {
+      idle-timeout 10;
+      permissions all;
+      deny-configuration "(system syslog)";
+    }
+    class JR_ENGINEER {
+      idle-timeout 10;
+      permissions all;
+      deny-configuration "(system syslog)";
+      deny-commands "(file delete)";
+      deny-commands "(request system software)";
+    }
+    class LAST_RESORT {
+      idle-timeout 10;
+      permissions all;
+      deny-configuration "(system syslog)";
+      deny-commands "(file delete)";
+    }
+    retry-options {
+      tries-before-disconnect 3;
+      lockout-period 15;
+    }
+    user emergency {
+      uid 2001;
+      class LAST_RESORT;
+      authentication {
+        encrypted-password {{emergency_key}};
+      }
+    }
+  }
+  rng {
+    hmac-drbg;
+  }
+}
