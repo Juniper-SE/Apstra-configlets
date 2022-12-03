@@ -1,0 +1,18 @@
+{
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "generators": [
+    {
+      "config_style": "junos",
+      "section": "system",
+      "template_text": "policy-options {\n    replace: policy-statement AllPodNetworks {\n        term AllPodNetworks-10 {\n            from {\n                family inet;\n                protocol direct;\n            }\n            then accept;\n        }\n        term ospf {\n            from {\n                protocol ospf;\n            }\n            then {\n                accept;\n            }\n        }\n        term AllPodNetworks-100 {\n            then reject;\n        }\n    }\n    policy-statement ospf-export {\n        term 0 {\n            from protocol [ bgp static ];\n            then {\n                tag 100;\n                accept;\n            }\n        }\n    }\n    policy-statement ospf-import {\n        term 0 {\n            from tag 100;\n            then reject;\n        }\n        term 1 {\n            then accept;\n        }\n    }\n}\nrouting-instances {{ ospf_vrf }} {\n    routing-options {\n        router-id {{ security_zones[ospf_vrf]['loopback_ip'] }};\n    }\n    protocols ospf {\n        export ospf-export;\n        import ospf-import;\n        area 0.0.0.0 {\n            interface {{ security_zones[ospf_vrf]['loopback_intf'] }} passive; \n{% for link in ospf_ptp_links.split(',') %}\n            interface {{ link }} {\n                mtu {{ ospf_mtu }};\n                interface-type p2p;\n            }\n{% endfor %}\n{% for vn_id, vn_data in vlan.items() %}\n{% if vn_data['ipv4_address'] != \"\" %}\n            interface irb.{{ vn_id }} {\n                mtu {{ ospf_mtu }};\n            }\n{% endif %}\n{% endfor %}\n        }\n    }\n}\n",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ],
+  "created_at": "2022-12-03T21:48:22.532516Z",
+  "id": "7163b9ba-d632-422a-9ebd-8224d9386943",
+  "last_modified_at": "2022-12-03T21:55:47.607362Z",
+  "display_name": "ospf-with-property"
+}
