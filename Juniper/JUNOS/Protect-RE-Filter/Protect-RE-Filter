@@ -33,6 +33,12 @@ policy-options {
     prefix-list PR-TACPLUS-SERVER {
         apply-path "system tacplus-server <*>";
     }
+    prefix-list PR-RADIUS-SERVER {
+        apply-path "system radius-server <*>";
+    }
+    prefix-list PR-DNS-SERVER {
+        apply-path "system name-server <*>";
+    }
     prefix-list PR-EM0-INTERFACE {
         apply-path "interfaces em0 unit 0 family inet address <*>";
     }
@@ -223,6 +229,32 @@ firewall {
                     protocol tcp;
                     source-port [ tacacs-ds tacacs ];
                     tcp-established;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term RADIUS {
+                from {
+                    source-prefix-list {
+                        PR-RADIUS-SERVER;  
+                    }
+                    protocol udp;
+                    source-port radius;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term DNS {
+                from {
+                    source-prefix-list {
+                        PR-DNS-SERVERS;
+                    }
+                    protocol [ udp tcp ];
+                    source-port 53;
                 }
                 then {
                     policer PC-1M;
