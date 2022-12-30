@@ -14,4 +14,4 @@ It is taking care of specifically allowing :
 
 And denying anything else.
 
-BE CAREFUL, on QFX5k mainly, the TCAM size is limited and its limit can be reached "easily" if this happens, make sure the FW filter is optimized (i.e. for example, in the associated prefix-list, try to use supernets to limit the number of entries in the TCAM)
+BE CAREFUL, on QFX5k mainly, the TCAM size is limited and its limit can be reached "easily". If this happens, make sure the FW filter is optimized (i.e. for example, in the associated prefix-list, try to use supernets to limit the number of entries in the TCAM: 1.1.1.0/30 is better than 1.1.1.1/32 + 1.1.1.2/32)
