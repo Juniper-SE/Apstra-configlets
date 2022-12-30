@@ -4,6 +4,7 @@ It is taking care of specifically allowing :
   - BGP
   - SNMP
   - NTP
+  - DNS
   - ICMP
   - TRACEROUTE
   - SSH
