@@ -9,7 +9,7 @@ It is taking care of specifically allowing :
   - SSH
   - NETCONF
   - HTTP/HTTPS for Leaf/Spine upgrade via Apstra GUI
-  - TACACS
+  - TACACS and RADIUS (keep the needed one)
   - DHCP relay
 
 And denying anything else.
