@@ -33,12 +33,6 @@ policy-options {
     prefix-list PR-TACPLUS-SERVER {
         apply-path "system tacplus-server <*>";
     }
-    prefix-list PR-RADIUS-SERVER {
-        apply-path "system radius-server <*>";
-    }
-    prefix-list PR-DNS-SERVER {
-        apply-path "system name-server <*>";
-    }
     prefix-list PR-EM0-INTERFACE {
         apply-path "interfaces em0 unit 0 family inet address <*>";
     }
@@ -107,7 +101,7 @@ firewall {
                     accept;
                 }
             }
-            term NTP-ACCEPT-OUT {
+            term NTP-ACCEPT {
                 from {
                     source-prefix-list {
                         PR-LOOPBACK;
@@ -115,22 +109,7 @@ firewall {
                         PR-EM0-INTERFACE;
                     }
                     protocol udp;
-                    source-port ntp;
-                }
-                then {
-                    policer PC-1M;
-                    accept;
-                }
-            }
-            term NTP-ACCEPT-IN {
-                from {
-                    source-prefix-list {
-                        PR-LOOPBACK;
-                        PR-NTP;
-                        PR-EM0-INTERFACE;
-                    }
-                    protocol udp;
-                    destination-port ntp;
+                    port ntp;
                 }
                 then {
                     policer PC-1M;
@@ -157,54 +136,27 @@ firewall {
                     accept;
                 }
             }
-            term MGMT-INBOUND-ACCEPT {
+            term MGMT-ACCEPT {
                 from {
                     source-prefix-list {
                         PR-MGMT-NETWORKS;
                     }
                     protocol tcp;
-                    destination-port [ ssh 830 ];
+                    port [ ssh 830 ];
                 }
                 then {
                     policer PC-100M;
                     accept;
                 }
             }
-            term MGMT-OUTBOUND-ACCEPT {
-                from {
-                    source-prefix-list {
-                        PR-MGMT-NETWORKS;
-                    }
-                    protocol tcp;
-                    source-port ssh;
-                    tcp-established;
-                }
-                then {
-                    policer PC-100M;
-                    accept;
-                }
-            }
-            term BGP-ACCEPT-OUT {
+            term BGP-ACCEPT {
                 from {
                     source-prefix-list {
                         PR-BGP-GLOBAL;
                         PR-BGP-VRF;
                     }
                     protocol tcp;
-                    source-port bgp;
-                }
-                then {
-                    accept;
-                }
-            }
-            term BGP-ACCEPT-IN {
-                from {
-                    source-prefix-list {
-                        PR-BGP-GLOBAL;
-                        PR-BGP-VRF;
-                    }
-                    protocol tcp;
-                    destination-port bgp;
+                    port bgp;
                 }
                 then {
                     accept;
@@ -235,36 +187,10 @@ firewall {
                     accept;
                 }
             }
-            term RADIUS {
-                from {
-                    source-prefix-list {
-                        PR-RADIUS-SERVER;  
-                    }
-                    protocol udp;
-                    source-port radius;
-                }
-                then {
-                    policer PC-1M;
-                    accept;
-                }
-            }
-            term DNS {
-                from {
-                    source-prefix-list {
-                        PR-DNS-SERVERS;
-                    }
-                    protocol [ udp tcp ];
-                    source-port 53;
-                }
-                then {
-                    policer PC-1M;
-                    accept;
-                }
-            }
             term DHCP-CLIENT {
                 from {
                     source-address 0.0.0.0/32;
-                    destination-address 255.255.255.255/32
+                    destination-address 255.255.255.255/32;
                     protocol udp;
                     source-port [ 67 68 ];
                     destination-port [ 67 68 ];
