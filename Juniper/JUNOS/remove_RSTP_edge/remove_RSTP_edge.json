@@ -1,0 +1,15 @@
+{
+    "ref_archs": [
+      "two_stage_l3clos"
+    ],
+    "generators": [
+      {
+        "config_style": "junos",
+        "section": "set_based_system",
+        "template_text": "{# This configlet looks for the tag 'no-rstp' on an interface and if #} \n{# found deletes the RSTP edge configuration for that port #}\n{% for if_name,if_param in interface.items() %}\n  {% for tags in if_param['tags'] %}\n   {% if tags == \"no-rstp-edge\" %}\ndelete protocols rstp interface {{ if_param['intfName'] }} edge\n    {% endif %}\n  {% endfor %}\n{% endfor %}",
+        "negation_template_text": "",
+        "filename": ""
+      }
+    ],
+    "display_name": "Remove RSTP Edge Configuration (Per Port)"
+  }
