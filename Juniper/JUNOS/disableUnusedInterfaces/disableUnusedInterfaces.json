@@ -6,7 +6,7 @@
       {
           "config_style": "junos",
           "section": "system",
-          "template_text": "{% for if_name,if_param in interface.items() %}\n  {% if if_param['description'] == \"\" %}\ninterfaces {\n    {{if_param['intfName']}} {\n        disable;\n   }\n}\n  {% endif %}\n{% endfor %}\n",
+          "template_text": "{% for if_name,if_param in interface.items() %}\n  {% if if_param['role'] == 'unused' %}\ninterfaces {\n    {{if_param['intfName']}} {\n        disable;\n   }\n}\n  {% endif %}\n{% endfor %}\n",
           "negation_template_text": "",
           "filename": ""
       }
