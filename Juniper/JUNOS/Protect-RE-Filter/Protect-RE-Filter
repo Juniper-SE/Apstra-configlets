@@ -1,0 +1,234 @@
+interfaces {
+    lo0 {
+        unit 0 {
+            family inet {
+                filter {
+                    input FF-PROTECT-RE;
+                }
+            }
+        }
+    }
+}
+policy-options {
+    prefix-list PR-MGMT-NETWORKS {
+        <mgmt-subnets>;
+    }
+    prefix-list PR-APSTRA {
+        <Asptra-VM>;
+    }
+    prefix-list PR-BGP-GLOBAL {
+        <lo0 subnets>;
+        <Fabric-interco-subnets>;
+        <DCI-Interco-subnets>;
+    }
+    prefix-list PR-BGP-VRF {
+        <VRF-interco-subnets>;
+    }
+    prefix-list PR-SNMP {
+        <snmp-server-subnets>;
+    }
+    prefix-list PR-NTP {
+        apply-path "system ntp server <*>";
+    }
+    prefix-list PR-TACPLUS-SERVER {
+        apply-path "system tacplus-server <*>";
+    }
+    prefix-list PR-EM0-INTERFACE {
+        apply-path "interfaces em0 unit 0 family inet address <*>";
+    }
+    prefix-list PR-LOOPBACK {
+        127.0.0.1/32;
+        apply-path "interfaces lo0 unit 0 family inet address <*>";
+    }
+}
+firewall {
+    family inet {
+        filter FF-PROTECT-RE {
+            term FRAGMENTS-DENY {
+                from {
+                    is-fragment;
+                }
+                then {
+                    discard;
+                }
+            }
+            term IP-OPTIONS-DENY {
+                from {
+                    ip-options any;
+                }
+                then {
+                    discard; 
+                }
+            }
+            term TCP-CONNECTIONS-ACCEPT {
+                from {
+                    source-prefix-list {
+                        PR-MGMT-NETWORKS;
+                        PR-BGP-GLOBAL;
+                        PR-BGP-VRF;
+                    }
+                    protocol tcp;
+                    tcp-flags "(syn & !ack) | fin | rst";
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term BFD-ACCEPT {
+                from {
+                    source-prefix-list {
+                        PR-BGP-GLOBAL;
+                        PR-BGP-VRF;
+                    }
+                    protocol udp;
+                    destination-port [ 3784 4784 6784 ];
+                }
+                then {
+                    accept;
+                }
+            }
+            term SNMP-ACCEPT {
+                from {
+                    source-prefix-list {
+                        PR-SNMP;
+                    }
+                    protocol udp;
+                    destination-port snmp;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term NTP-ACCEPT {
+                from {
+                    source-prefix-list {
+                        PR-LOOPBACK;
+                        PR-NTP;
+                        PR-EM0-INTERFACE;
+                    }
+                    protocol udp;
+                    port ntp;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term ICMP-ACCEPT {
+                from {
+                    protocol icmp;
+                    icmp-type [ echo-request echo-reply unreachable time-exceeded ];
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term TRACEROUTE-ACCEPT {
+                from {
+                    protocol udp;
+                    destination-port 33434-33464;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term MGMT-ACCEPT {
+                from {
+                    source-prefix-list {
+                        PR-MGMT-NETWORKS;
+                    }
+                    protocol tcp;
+                    port [ ssh 830 ];
+                }
+                then {
+                    policer PC-100M;
+                    accept;
+                }
+            }
+            term BGP-ACCEPT {
+                from {
+                    source-prefix-list {
+                        PR-BGP-GLOBAL;
+                        PR-BGP-VRF;
+                    }
+                    protocol tcp;
+                    port bgp;
+                }
+                then {
+                    accept;
+                }
+            }
+            term UPGRADE {
+                from {
+                    source-prefix-list {
+                        PR-APSTRA;
+                    }
+                    protocol tcp;
+                    source-port [ http https ];
+                    tcp-established;
+                }
+                then accept;
+            }
+            term TACACS {
+                from {
+                    source-prefix-list {
+                        PR-TACPLUS-SERVER;  
+                    }
+                    protocol tcp;
+                    source-port [ tacacs-ds tacacs ];
+                    tcp-established;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
+            term DHCP-CLIENT {
+                from {
+                    source-address 0.0.0.0/32;
+                    destination-address 255.255.255.255/32;
+                    protocol udp;
+                    source-port [ 67 68 ];
+                    destination-port [ 67 68 ];
+                }
+                then {
+                    accept;
+                }
+            }
+            term DHCP-SERVER {
+                from {
+                    protocol udp;
+                    source-port [ 67 68 ];
+                    destination-port [ 67 68 ];
+                }
+                then {
+                    accept;
+                }
+            }
+            term ALL {
+                then {
+                    count ALL-DENY;
+                    discard; 
+                }
+            }
+        }
+    }
+    policer PC-1M {
+        if-exceeding {
+            bandwidth-limit 1m;
+            burst-size-limit 15k;
+        }
+        then discard;
+    }
+    policer PC-100M {
+        if-exceeding {
+            bandwidth-limit 100m;
+            burst-size-limit 75k;
+        }
+        then discard;
+    }
+}
