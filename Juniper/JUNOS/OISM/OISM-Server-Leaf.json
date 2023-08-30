@@ -1,0 +1,18 @@
+{
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "generators": [
+    {
+      "config_style": "junos",
+      "section": "system",
+      "template_text": "forwarding-options {\n    multicast-replication {\n        evpn {\n            irb oism;\n        }\n    }\n}\n{% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') %}\n{# Calculate the last IP address in the SBD subnet, used for the next-hop address of default route in inet.2 RPF table #}\n{% set ip = v.ipv4_address.split('.') %}\n{% set ip_num = (ip[0]|int)*(256**3) + (ip[1]|int)*(256**2) + (ip[2]|int)*256 + (ip[3]|int) %}\n{% set subnet_num = ip_num // 2**(32-v.ipv4_prefixlen) * 2**(32-v.ipv4_prefixlen) %}\n{% set ip_last_num = subnet_num + 2**(32-v.ipv4_prefixlen) - 2 %}\n{% set ip_last = '{}.{}.{}.{}'.format(ip_last_num//(256**3), ip_last_num%(256**3)//(256**2), ip_last_num%(256**2)//256, ip_last_num%256) %}\n{% if loop.first %}\nrouting-instances {\n{% endif %}\n    {{ v.vrf_name }} {\n        routing-options {\n            rib {{ v.vrf_name }}.inet.2 {\n                static {\n                    route 0.0.0.0/0 next-hop {{ ip_last }};\n                }\n            }\n            interface-routes {\n                rib-group inet {{ v.vrf_name }}-if-rib;\n            }\n        }\n        protocols {\n            evpn {\n                oism {\n                    supplemental-bridge-domain-irb irb.{{ v.id }};\n                }\n            }\n            pim {\n                rib-group inet {{ v.vrf_name }}-mcast-rpf-rib;\n                passive;\n                interface all;\n                interface irb.{{ v.id }} {\n                    accept-remote-source;\n                }\n            }\n        }\n    }\n{% if loop.last %}\n}\n{% endif %}\n{% endfor %}\n{% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') %}\n{% if loop.first %}\nrouting-options {\n    rib-groups {\n{% endif %}\n        {{ v.vrf_name }}-mcast-rpf-rib {\n            import-rib {{ v.vrf_name }}.inet.2;\n        }\n        {{ v.vrf_name }}-if-rib {\n            import-rib [ {{ v.vrf_name }}.inet.0 {{ v.vrf_name }}.inet.2 ];\n        }\n{% if loop.last %}\n    }\n}\n{% endif %}\n{% endfor %}\nprotocols {\n    igmp-snooping {\n        vlan all {\n            proxy;\n        }\n    }\n}\n{% if hcl.startswith('Juniper_QFX1000') %}\nmulticast-snooping-options {\n    oism {\n        install-star-g-routes;\n    }\n}\n{% endif %}\n",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ],
+  "created_at": "2023-08-30T20:01:18.085498Z",
+  "id": "d844208b-a68c-46b9-880c-0aa8f9a79169",
+  "last_modified_at": "2023-08-30T20:01:18.085498Z",
+  "display_name": "OISM-Server-Leaf"
+}

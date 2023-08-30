@@ -1,0 +1,122 @@
+forwarding-options {
+    multicast-replication {
+        evpn {
+            irb oism;
+        }
+    }
+}
+{% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') and v.vrf_name+'=' in PIM %}
+{% if loop.first %}
+policy-options {
+{% endif %}
+{% for pim in PIM.split(';') if pim.strip().startswith(v.vrf_name+'=') %}
+    policy-statement {{ v.vrf_name }}-external-mc-router {
+        term 1 {
+            from {
+                prefix-list {{ v.vrf_name }}-peer-pim-neighbors;
+            }
+            then accept;
+        }
+        term 2 {
+            then reject;
+        }
+    }
+    prefix-list {{ v.vrf_name }}-peer-pim-neighbors {
+        {% for ip in pim.split('=')[1].split(',') %}
+        {{ ip }}/32;
+        {% endfor %}
+    }
+{% endfor %}
+{% if loop.last %}
+}
+{% endif %}
+{% endfor %}
+{% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') %}
+{% if loop.first %}
+routing-instances {
+{% endif %}
+    {{ v.vrf_name }} {
+        protocols {
+            evpn {
+                oism {
+                    supplemental-bridge-domain-irb irb.{{ v.id }};
+                    {% for m in (vlan |d({})).values() if m.get('name', '').endswith('-MVLAN') and m.vrf_name == v.vrf_name %}
+                    {% if loop.first %}
+                    pim-evpn-gateway {
+                    {% endif %}
+                        external-irb irb.{{ m.id }};
+                    {% if loop.last %}
+                    }
+                    {% endif %}
+                    {% endfor %}
+                }
+            }
+            pim {
+                {% for rp in RP.split(';') if rp.strip().startswith(v.vrf_name+'=') %}
+                {% if loop.first %}
+                rp {
+                    static {
+                {% endif %}
+                        {% for ip in rp.split('=')[1].split(',') %}
+                        address {{ ip }};
+                        {% endfor %}
+                {% if loop.last %}
+                    }
+                }
+                {% endif %}
+                {% endfor %}
+                {% for i in (vlan |d({})).values() if i.vrf_name == v.vrf_name and i.impl_type == 'vxlan' and not i.get('name', '').endswith('-SBD') and not i.get('name', '').endswith('-MVLAN') %}
+                interface irb.{{ i.id }} {
+                    distributed-dr;
+                }
+                {% endfor %}
+                {% for m in (vlan |d({})).values() if m.get('name', '').endswith('-MVLAN') and m.vrf_name == v.vrf_name %}
+                {% if m.vrf_name in PIM %}
+                interface irb.{{ m.id }} {
+                    accept-join-always-from {{ v.vrf_name }}-external-mc-router;
+                }
+                {% else %}
+                interface irb.{{ m.id }};
+                {% endif %}
+                {% endfor %}
+                interface irb.{{ v.id }};
+                {% for l in (loopbacks |d({})).values() if l.vrf_name == v.vrf_name %}
+                interface {{ l.name }};
+                {% endfor %}
+            }
+        }
+    }
+{% if loop.last %}
+}
+{% endif %}
+{% endfor %}
+protocols {
+    igmp-snooping {
+        vlan all {
+            proxy;
+        }
+        {% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') %}
+        {% for m in (vlan |d({})).values() if m.get('name', '').endswith('-MVLAN') and m.vrf_name == v.vrf_name %}
+        {% for intf in interface.values() if m.id |string in intf.allowed_vlans and not intf.get('part_of') %}
+        {% if loop.first %}
+        vlan vn{{ m.id }} {
+        {% endif %}
+            interface {{ intf.intfName }}.0 {
+                multicast-router-interface;
+            }
+        {% if loop.last %}
+        }
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+    }
+}
+{% if hcl.startswith('Juniper_QFX1000') %}
+multicast-snooping-options {
+    oism {
+        install-star-g-routes;
+    }
+}
+{% endif %}
+

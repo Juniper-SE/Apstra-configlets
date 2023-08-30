@@ -1,0 +1,79 @@
+forwarding-options {
+    multicast-replication {
+        evpn {
+            irb oism;
+        }
+    }
+}
+{% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') %}
+{# Calculate the last IP address in the SBD subnet, used for the next-hop address of default route in inet.2 RPF table #}
+{% set ip = v.ipv4_address.split('.') %}
+{% set ip_num = (ip[0]|int)*(256**3) + (ip[1]|int)*(256**2) + (ip[2]|int)*256 + (ip[3]|int) %}
+{% set subnet_num = ip_num // 2**(32-v.ipv4_prefixlen) * 2**(32-v.ipv4_prefixlen) %}
+{% set ip_last_num = subnet_num + 2**(32-v.ipv4_prefixlen) - 2 %}
+{% set ip_last = '{}.{}.{}.{}'.format(ip_last_num//(256**3), ip_last_num%(256**3)//(256**2), ip_last_num%(256**2)//256, ip_last_num%256) %}
+{% if loop.first %}
+routing-instances {
+{% endif %}
+    {{ v.vrf_name }} {
+        routing-options {
+            rib {{ v.vrf_name }}.inet.2 {
+                static {
+                    route 0.0.0.0/0 next-hop {{ ip_last }};
+                }
+            }
+            interface-routes {
+                rib-group inet {{ v.vrf_name }}-if-rib;
+            }
+        }
+        protocols {
+            evpn {
+                oism {
+                    supplemental-bridge-domain-irb irb.{{ v.id }};
+                }
+            }
+            pim {
+                rib-group inet {{ v.vrf_name }}-mcast-rpf-rib;
+                passive;
+                interface all;
+                interface irb.{{ v.id }} {
+                    accept-remote-source;
+                }
+            }
+        }
+    }
+{% if loop.last %}
+}
+{% endif %}
+{% endfor %}
+{% for v in (vlan |d({})).values() if v.get('name', '').endswith('-SBD') and v.get('ipv4_address') and v.get('ipv4_prefixlen') %}
+{% if loop.first %}
+routing-options {
+    rib-groups {
+{% endif %}
+        {{ v.vrf_name }}-mcast-rpf-rib {
+            import-rib {{ v.vrf_name }}.inet.2;
+        }
+        {{ v.vrf_name }}-if-rib {
+            import-rib [ {{ v.vrf_name }}.inet.0 {{ v.vrf_name }}.inet.2 ];
+        }
+{% if loop.last %}
+    }
+}
+{% endif %}
+{% endfor %}
+protocols {
+    igmp-snooping {
+        vlan all {
+            proxy;
+        }
+    }
+}
+{% if hcl.startswith('Juniper_QFX1000') %}
+multicast-snooping-options {
+    oism {
+        install-star-g-routes;
+    }
+}
+{% endif %}
+
