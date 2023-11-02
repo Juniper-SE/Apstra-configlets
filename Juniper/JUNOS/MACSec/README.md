@@ -23,7 +23,7 @@ MACSec
 CAK is the preferred method for switches, as described below.
 
 [Juniper documentation ](https://www.juniper.net/documentation/en_US/junos/topics/task/configuration/macsec.html)
-> [!Best Practice Statement]
+> [!WARNING]
 We recommend enabling MACsec using static CAK security mode on
 switch-to-switch links. Static CAK security mode ensures security by
 frequently refreshing to a new random secure association key (SAK) and
