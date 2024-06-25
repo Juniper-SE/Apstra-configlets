@@ -33,6 +33,9 @@ policy-options {
     prefix-list PR-TACPLUS-SERVER {
         apply-path "system tacplus-server <*>";
     }
+    prefix-list PR-RADIUS-SERVER {
+        apply-path "system radius-server <*>";
+    }
     prefix-list PR-EM0-INTERFACE {
         apply-path "interfaces em0 unit 0 family inet address <*>";
     }
@@ -187,6 +190,20 @@ firewall {
                     accept;
                 }
             }
+            term RADIUS {
+                from {
+                    source-prefix-list {
+                        PR-RADIUS-SERVER;  
+                    }
+                    protocol udp;
+                    source-port radius;
+                    tcp-established;
+                }
+                then {
+                    policer PC-1M;
+                    accept;
+                }
+            }
             term DHCP-CLIENT {
                 from {
                     source-address 0.0.0.0/32;
@@ -208,6 +225,12 @@ firewall {
                 then {
                     accept;
                 }
+            }
+            term PIM {
+                from {
+                    protocol pim;
+                }
+                then accept;
             }
             term ALL {
                 then {
