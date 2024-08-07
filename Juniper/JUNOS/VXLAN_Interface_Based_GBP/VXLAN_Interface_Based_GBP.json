@@ -1,0 +1,18 @@
+{
+  "id": "8c25e2f8-4886-43ce-a4f6-3ca68c167692",
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "created_at": "2024-07-03T13:48:14.891128Z",
+  "last_modified_at": "2024-07-30T15:44:55.448290Z",
+  "display_name": "GBP-Egress-Configlet",
+  "generators": [
+    {
+      "config_style": "junos",
+      "template_text": "chassis {                       \n    forwarding-options {\n        vxlan-gbp-profile;\n    }\n}\n\n{% set data = namespace(src_tag_list=[]) %}\n\nfirewall {\n    family any {\n       filter MSEG {\n{% for all_filters in gbp_info %}\n    {% for src_tag, src_tag_filters in all_filters.iteritems() %}\n        {% if src_tag not in data.src_tag_list %}\n            {% set data.src_tag_list = data.src_tag_list + [src_tag] %}\n        {% endif %}\n        {% for dst_tag_info in src_tag_filters %}\n            {% for dst_tag, action in dst_tag_info.items() %}\n        term From{{src_tag}}-To{{dst_tag}} {\n            from {\n                gbp-src-tag {{src_tag}};\n                gbp-dst-tag {{dst_tag}};\n            }\n            then {\n                {{action}};\n                count {{src_tag}}-To{{dst_tag}};\n                }\n            }\n            {% endfor %}\n        {% endfor %}\n    {% endfor %}\n{% endfor %}\n        }\n    }\n}\n\n{% set unique_src_tag_list= data.src_tag_list %}\n\n\n\nfirewall {\n    family any {\n        filter GBP-TAG {\n        micro-segmentation;\n{% for src_tag in unique_src_tag_list %}\n    {% for if_name,if_param in interface.items() %}\n        {% for tags in if_param['tags'] %}\n            {% if tags == \"gbp_\"+src_tag %}\n                {% if \"ae\" not in if_param['intfName'] and \"ae\" not in if_param['part_of'] %}\n        term TAG{{src_tag}}-{{if_param['intfName']}} {\n            from {\n                interface {{if_param['intfName']}}.0;\n            }\n            then gbp-tag {{src_tag}};\n        }\n                {% elif \"ae\" in if_param['part_of']%}\n        term TAG{{src_tag}}-{{if_param['part_of']}} {\n            from {\n                interface {{if_param['part_of']}}.0;\n            }\n            then gbp-tag {{src_tag}};\n        }\n                {% endif %}\n            {% endif %}\n        {% endfor %}\n    {% endfor %}\n{% endfor %}\n        }\n    }\n}\n                 \n\n\n",
+      "section": "system",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ]
+}

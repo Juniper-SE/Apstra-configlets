@@ -1,0 +1,13 @@
+gbp_info:
+- '10':
+  - '10': accept
+  - '20': accept
+  - '30': discard
+- '20':
+  - '20': accept
+  - '10': accept
+  - '30': discard
+- '30':
+  - '10': discard
+  - '20': discard
+  - '30': accept
