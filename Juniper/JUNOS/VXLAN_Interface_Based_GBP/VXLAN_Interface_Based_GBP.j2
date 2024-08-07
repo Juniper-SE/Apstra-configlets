@@ -3,13 +3,6 @@ chassis {
         vxlan-gbp-profile;
     }
 }
-forwarding-options {
-    evpn-vxlan {
-        gbp {
-            ingress-enforcement;
-        }
-    }
-}
 
 {% set data = namespace(src_tag_list=[]) %}
 
