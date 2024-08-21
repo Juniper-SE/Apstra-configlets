@@ -1,0 +1,18 @@
+{
+    "id": "001f0af3-1fed-4e6b-93fe-2886886c003c",
+    "ref_archs": [
+      "two_stage_l3clos"
+    ],
+    "created_at": "2024-08-21T11:07:51.782983Z",
+    "last_modified_at": "2024-08-21T11:07:51.782983Z",
+    "display_name": "Junos Interface Force Up",
+    "generators": [
+      {
+        "config_style": "junos",
+        "template_text": "ether-options {\n         802.3ad {\n               lacp {\n                force-up;\n                }\n         }\n}",
+        "section": "system",
+        "negation_template_text": "",
+        "filename": ""
+      }
+    ]
+  }
