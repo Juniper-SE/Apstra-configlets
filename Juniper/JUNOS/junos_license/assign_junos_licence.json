@@ -1,0 +1,18 @@
+{
+  "id": "362a5049-385e-4bfb-a512-89fab2a2358f",
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "created_at": "2024-08-21T10:39:30.600761Z",
+  "last_modified_at": "2024-08-21T10:39:30.600761Z",
+  "display_name": "assign_junos_licence",
+  "generators": [
+    {
+      "config_style": "junos",
+      "template_text": "system {\n  license {\n    keys {\n      key \"E20191218001 AAAAAA BBBBB CCCCC DDDDD EEEEE FFFFF GGGGG HHHHH IIIII JJJJJJ KKKKKK LLLLLL MMMMMM NNNNN OOOOO PPPPP RRRRR SSSSS TTTTT UUUUU\";\n    }\n  }\n}",
+      "section": "system",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ]
+}
