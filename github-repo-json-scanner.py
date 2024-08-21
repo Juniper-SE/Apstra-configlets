@@ -7,7 +7,7 @@ configlets against new versions of Apstra.
 
 High-level functionality:
 1. Cleans up any existing configlets in the Apstra instance
-2. Clones the specified GitHub repository containing configlets
+2. Clones the specified GitHub repository containing configlets (from a specified branch)
 3. Processes each JSON file in the repository:
    - Validates the JSON structure
    - Attempts to post the configlet to Apstra
@@ -17,8 +17,6 @@ High-level functionality:
 
 This script helps identify any configlets that may have compatibility issues
 with the current Apstra version, ensuring smooth upgrades and maintenance.
-
-by Adam Jarvis
 """
 
 import os
@@ -36,6 +34,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 API_IP = "x.x.x.x"
 USERNAME = "admin"
 PASSWORD = "admin"
+GITHUB_BRANCH = "main"  # Default branch, can be changed as needed
 
 API_BASE_URL = f"https://{API_IP}"
 LOGIN_ENDPOINT = f"{API_BASE_URL}/api/aaa/login"
@@ -58,8 +57,8 @@ def cleanup_previous_run(target_dir, report_file):
         except Exception as e:
             print(f"Error removing file {report_file}: {e}")
 
-def clone_repo(repo_url, target_dir):
-    subprocess.run(["git", "clone", repo_url, target_dir], check=True)
+def clone_repo(repo_url, target_dir, branch):
+    subprocess.run(["git", "clone", "-b", branch, repo_url, target_dir], check=True)
 
 def find_json_files(directory):
     json_files = []
@@ -162,7 +161,7 @@ def generate_report(results):
     failures = [r for r in results if r['status'] == 'failed']
     skipped = [r for r in results if r['status'] == 'skipped']
     
-    report = "API Post and Delete Report\n\n"
+    report = "API Post and Delete Report\n"
     report += "===========================\n\n"
     report += f"Total files processed: {len(results)}\n"
     report += f"Successful posts and deletes: {len(successes)}\n"
@@ -170,26 +169,26 @@ def generate_report(results):
     report += f"Failed posts: {len(failures)}\n"
     report += f"Skipped files: {len(skipped)}\n\n"
     
-    report += "Successful Posts and Deletes:\n\n"
+    report += "Successful Posts and Deletes:\n"
     report += "=============================\n"
     for s in successes:
         report += f"File: {s['file']}\n"
         report += f"Configlet ID (deleted): {s['configlet_id']}\n\n"
     
-    report += "Successful Posts but Failed Deletes:\n\n"
+    report += "Successful Posts but Failed Deletes:\n"
     report += "=====================================\n"
     for p in partials:
         report += f"File: {p['file']}\n"
         report += f"Configlet ID: {p['configlet_id']}\n"
         report += f"Delete Error: {p['delete_error']}\n\n"
     
-    report += "Failed Posts:\n\n"
+    report += "Failed Posts:\n"
     report += "=============\n"
     for f in failures:
         report += f"File: {f['file']}\n"
         report += f"Error: {f['error']}\n\n"
 
-    report += "Skipped Files:\n\n"
+    report += "Skipped Files:\n"
     report += "==============\n"
     for s in skipped:
         report += f"File: {s['file']}\n"
@@ -232,7 +231,8 @@ def main():
     delete_all_configlets(token)
 
     # Step 3: Clone the repository
-    clone_repo(repo_url, target_dir)
+    print(f"Cloning branch '{GITHUB_BRANCH}' from the repository...")
+    clone_repo(repo_url, target_dir, GITHUB_BRANCH)
 
     # Step 4: Find all JSON files and create a list (excluding root directory)
     json_files = find_json_files(target_dir)
