@@ -7,5 +7,9 @@ More information can be found here: https://www.juniper.net/documentation/us/en/
 
 The directory structure for this repo is straightforward, each configlet is listed under the device brand ie ```Juniper/JUNOS``` and under that directory there is a list of the configlets.  Once you get into the configlet of interest there will be a ```README``` file with some information on the configlet.
 
+# How to Use
+
+https://github.com/user-attachments/assets/85813feb-f3ba-4613-841a-d608be185559
+
 # POSTMAN
 There is a postman collection included in the base directory that will provide API access to the configlets that mirrors the directories and configlets, so you will easily be able to push any given configlet to the chosen Apstra API via REST.
