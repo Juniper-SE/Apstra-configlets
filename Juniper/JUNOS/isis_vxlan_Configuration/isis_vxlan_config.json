@@ -1,0 +1,18 @@
+{
+    "id": "fb30da7f-1c26-42fd-9c1e-e4873eb4e364",
+    "ref_archs": [
+      "two_stage_l3clos"
+    ],
+    "created_at": "2024-08-23T08:06:57.059994Z",
+    "last_modified_at": "2024-08-23T08:06:57.059994Z",
+    "display_name": "isis_vxlan_config",
+    "generators": [
+      {
+        "config_style": "junos",
+        "template_text": "{% for key, value in vlan.iteritems() %}\n    {% if value[\"vxlan_id\"] == 300000: %}\nset interfaces irb unit {{ value[\"id\"] }} family iso\nset interfaces lo0 unit 0 family iso address 49.0001.1720.2700.0003.00\nset protocols isis interface irb.{{ value[\"id\"] }}\nset protocols isis interface lo0.0 level 1 disable\nset protocols isis interface lo0.0 level 2 passive\nset protocols isis level 1 disable\nset protocols isis level 2 wide-metrics-only\nset protocols isis enable\n\t{% endif %}\n{% endfor %}",
+        "section": "system",
+        "negation_template_text": "",
+        "filename": ""
+      }
+    ]
+  }
