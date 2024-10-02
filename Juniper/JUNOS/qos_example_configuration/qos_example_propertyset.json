@@ -9,8 +9,8 @@
       "NC_buffer_size_percent": 5,
       "NC_priority": "high",
       "NC_shaping_rate_percent": 5,
-      "RT_buffer_size_temporal": "5k;",
+      "RT_buffer_size_temporal": "5k",
       "RT_priority": "low-latency",
-      "RT_shaping_rate_percent": "50;"
+      "RT_shaping_rate_percent": "50"
     }
   }
