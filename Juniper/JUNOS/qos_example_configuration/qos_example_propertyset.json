@@ -1,0 +1,16 @@
+{
+    "scheduler_values": {
+      "AF_buffer_size_temporal": "4m",
+      "AF_priority": "low",
+      "AF_transmit_rate_percent": 50,
+      "BE_buffer_size_temporal": "4m",
+      "BE_priority": "low",
+      "BE_transmit_rate": "remainder",
+      "NC_buffer_size_percent": 5,
+      "NC_priority": "high",
+      "NC_shaping_rate_percent": 5,
+      "RT_buffer_size_temporal": "5k;",
+      "RT_priority": "low-latency",
+      "RT_shaping_rate_percent": "50;"
+    }
+  }
