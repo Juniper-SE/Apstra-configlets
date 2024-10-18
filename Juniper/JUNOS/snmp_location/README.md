@@ -1,20 +1,52 @@
-This configlet is a [dynamic jinja-based template](https://supportportal.juniper.net/s/article/Juniper-Apstra-Jinja-Configlets-using-dynamic-data-from-deviceModel?language=en_US) whch sets the SNMP Location based on a lookup of the device name in the device model.  
+# SNMP Location for Abstract Configlets
 
-note: deviceModel is a hidden and undocumented feature.
+This configlet demonstrates how to reference the location field set under 'Manage Devices' within an SNMP configlet or any configlet that may benefit from location information in Juniper Apstra.
 
-Here is the jinja code that does the work understand the matching information is an example and should be tuned to your environment.
+The configlet is a [dynamic jinja-based template](https://supportportal.juniper.net/s/article/Juniper-Apstra-Jinja-Configlets-using-dynamic-data-from-deviceModel?language=en_US).
+
+
+## Overview
+
+The configlet performs two key tasks:
+1. Sets up a basic SNMP configuration
+2. Demonstrates how to reference the location field within the configlet
+
+## Usage
+
+1. Download the `SNMsnmpLocation_jinja.json` file from this repository.
+2. In Apstra, navigate to Design > Configlets and click "Create Configlet".
+3. Choose "Import Configlet" and select the downloaded JSON file.
+4. Rename the configlet if desired and click "Create".
+
+## Configlet Structure
 
 ```
-{% set snmp_location = {} %}
-{% set test = snmp_location.update({'Leaf-30': 'DC1-Rack30'}) %}
-{% set test = snmp_location.update({'Leaf-31': 'DC1-Rack31'}) %}
-{% set test = snmp_location.update({'Leaf-32': 'DC1-Rack32'}) %}
-{% set test = snmp_location.update({'Leaf-33': 'DC1-Rack33'}) %}
-{% set test = snmp_location.update({'Leaf-34': 'DC2-Rack34'}) %}
-{% set test = snmp_location.update({'Leaf-35': 'DC2-Rack35'}) %}
- 
-{% if snmp_location[hostname] is defined %}
 snmp {
-    location "{{snmp_location[hostname]}}";
+    community public;
+    location {{ location }};
 }
-{% endif %}
+```
+
+This configlet sets up a basic SNMP configuration with a public community string and references the location field using the `{{ location }}` variable.
+
+## Setting Device Location
+
+To set the location for a particular device:
+
+1. Go to Manage Devices in Apstra.
+2. Select the device you wish to view.
+3. In the first tab (Devices), click the "Edit" button on the right-hand side.
+4. You will see a "Location" field. Click "Edit" to add your desired XYZ location.
+
+## Adding Configlet to Blueprint
+
+1. Open your blueprint in Apstra.
+2. Go to Staged > Catalog > Configlets.
+3. Click "Import Configlet" and select the SNMP Location configlet.
+4. Choose where to apply the configlet (e.g., all switches) and click "Import".
+
+## Applying the Configlet
+
+Once the configlet is added to your blueprint and you've set the location for your devices, the configlet will automatically reference the location you've set when it's applied.
+
+Note: This configlet serves as an example of how to use the location field. You can incorporate the `{{ location }}` reference into other configlets where location information is relevant.
