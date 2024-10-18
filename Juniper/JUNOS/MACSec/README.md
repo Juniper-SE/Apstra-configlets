@@ -39,12 +39,14 @@ A feature license is required to configure MACsec on an EX Series or a QFX Serie
 > [!WARNING]
 > ## Known Issue: MACsec Connection Reset
 > 
-> There is a known issue where MACsec connections restart after every commit done via Apstra. This problem is also reproducible when performing configuration changes using the "load override" command in JunOS CLI. The core of the issue lies in the way the licence is being handled during configuration changes.
+> There is a known issue where MACsec connections restart after every commit done via Apstra. This problem is also reproducible when performing configuration changes using the "load override" command in JunOS CLI. The core of the issue lies in the way the licence is being handled during configuration changes, specifically when the licence key is pushed via configuration.
 > 
 > ### Symptoms
 > 
 > - MACsec connection resets every time after committing configuration changes via Apstra.
 > - The issue is replicated when using "load override" in JunOS CLI.
+> - The problem occurs when the licence key is pushed via configuration.
+> - Pushing the licence causes the MACsec session to get reset, resulting in downtime.
 > - Logs show the deletion and reinstallation of the licence during the configuration load, as demonstrated by licence event logs:
 > 
 > ```
@@ -53,6 +55,10 @@ A feature license is required to configure MACsec on an EX Series or a QFX Serie
 > 777 Oct 14 08:45:42.912469 license_event_logger:384 message: Received license "installation" event for feature 154
 > 779 Oct 14 08:45:42.912489 license_event_handler:396 LICENSE_EVENT INSTALL/DELETE event:1
 > ```
+> 
+> ### Impact
+> 
+> The outcome of pushing the licence key via configuration is that the MACsec session gets reset, causing downtime in the network.
 > 
 > ### Temporary Workaround
 > 
@@ -63,6 +69,8 @@ A feature license is required to configure MACsec on an EX Series or a QFX Serie
 > ```
 > request system license add terminal
 > ```
+> 
+> By using this method, you can avoid pushing the licence key via configuration, thereby preventing the MACsec session reset and associated downtime.
 
 ## Problem Statement
 
