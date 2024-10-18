@@ -36,6 +36,34 @@ MACsec—are only available in static CAK security mode.
 > [!NOTE]
 A feature license is required to configure MACsec on an EX Series or a QFX Series switch, except the QFX10000-6C-DWDM and QFX10000-30C-M line cards. If the MACsec licence is not installed, MACsec functionality cannot be activated. The MACsec feature license is an independent feature license and not part of an enhanced or advanced feature license aka EFL / AFL
 
+> [!WARNING]
+> ## Known Issue: MACsec Connection Reset
+> 
+> There is a known issue where MACsec connections restart after every commit done via Apstra. This problem is also reproducible when performing configuration changes using the "load override" command in JunOS CLI. The core of the issue lies in the way the licence is being handled during configuration changes.
+> 
+> ### Symptoms
+> 
+> - MACsec connection resets every time after committing configuration changes via Apstra.
+> - The issue is replicated when using "load override" in JunOS CLI.
+> - Logs show the deletion and reinstallation of the licence during the configuration load, as demonstrated by licence event logs:
+> 
+> ```
+> 679 Oct 14 08:45:42.658593 license_event_logger:384 message: Received license "deletion" event for feature 154
+> 681 Oct 14 08:45:42.658618 license_event_handler:396 LICENSE_EVENT INSTALL/DELETE event:2
+> 777 Oct 14 08:45:42.912469 license_event_logger:384 message: Received license "installation" event for feature 154
+> 779 Oct 14 08:45:42.912489 license_event_handler:396 LICENSE_EVENT INSTALL/DELETE event:1
+> ```
+> 
+> ### Temporary Workaround
+> 
+> While PR1841551 has been raised to address the issue from the JunOS side, a temporary workaround is available. To avoid the MACsec reset issue, change the method of licence installation:
+> 
+> Instead of relying on the current method of embedding the licence configuration within the general system configuration, add a licence from CLI by the following commands:
+> 
+> ```
+> request system license add terminal
+> ```
+
 ## Problem Statement
 
 P2P DCI links at Juniper are often secured with MACSec. With AOS
