@@ -13,7 +13,7 @@ The configlet performs two key tasks:
 
 ## Usage
 
-1. Download the `SNMsnmpLocation_jinja.json` file from this repository.
+1. Download the `snmpLocation_jinja.json` file from this repository.
 2. In Apstra, navigate to Design > Configlets and click "Create Configlet".
 3. Choose "Import Configlet" and select the downloaded JSON file.
 4. Rename the configlet if desired and click "Create".
@@ -35,8 +35,14 @@ To set the location for a particular device:
 
 1. Go to Manage Devices in Apstra.
 2. Select the device you wish to view.
+![Screenshot 2024-10-18 at 11 58 00](https://github.com/user-attachments/assets/6be204f7-037e-4ff7-96d4-664e639d795b)
+
 3. In the first tab (Devices), click the "Edit" button on the right-hand side.
+![Screenshot 2024-10-18 at 11 58 19](https://github.com/user-attachments/assets/6d0ed288-0eb5-456b-837a-8c1cb1d47b65)
+
 4. You will see a "Location" field. Click "Edit" to add your desired XYZ location.
+![Screenshot 2024-10-18 at 11 32 27](https://github.com/user-attachments/assets/19a5aba2-420e-4152-a93e-508e71391253)
+
 
 ## Adding Configlet to Blueprint
 
