@@ -1,45 +1,18 @@
-{#
-   IMPORTANT: To use this configlet, you must tag the system interfaces
-   that are to be decommissioned with the tag 'decomm' in your inventory.
-   This configlet will then generate the necessary BGP configuration deletions
-   for the tagged interfaces and their corresponding BGP sessions.
-#}
- 
-{# Initialize namespace for storing decommissioned IPs and ASNs #}
-{% set ns = namespace(decomm_ips=[], decomm_asn=[]) %}
- 
-{# Step 1: Collect IP addresses of interfaces tagged with 'decomm' #}
-{% for ip_name, ip_data in ip.items() %}
-    {% if 'decomm' in ip_data.interface.tags %}
-        {# Add the IPv4 address of the tagged interface to our list #}
-        {% set ns.decomm_ips = ns.decomm_ips + [ip_data.ipv4_address] %}
-    {% endif %}
-{% endfor %}
- 
-{# Step 2: Identify BGP sessions associated with the decommissioned IPs #}
-{% for session_name, session_data in bgp_sessions.items() %}
-    {% if session_data.source_ip in ns.decomm_ips %}
-        {# If the BGP session's source IP matches a decommissioned IP, add its destination ASN to our list #}
-        {% set ns.decomm_asn = ns.decomm_asn + [session_data.dest_asn] %}
-    {% endif %}
-{% endfor %}
- 
-{# Step 3: Generate BGP configuration deletions for affected sessions #}
-{% for session_name, session_data in bgp_sessions.items() %}
-    {% if session_data.dest_asn in ns.decomm_asn %}
-        {% if session_data.role == 'leaf_evpn' %}
-            {# Delete BGP neighbor configuration for EVPN leaf nodes #}
-delete protocols bgp group l3clos-l-evpn neighbor {{ session_data.dest_ip }}
-        {% elif session_data.role == 'leaf_spine' %}
-            {# Delete BGP neighbor configuration for leaf-spine connections #}
-delete protocols bgp group l3clos-l neighbor {{ session_data.dest_ip }}
-        {% endif %}
-    {% endif %}
-{% endfor %}
- 
-{#
-   Note: This configlet will generate 'delete' commands for BGP neighbors
-   that are connected to interfaces tagged for decommissioning. These commands
-   can be applied to remove the BGP peering configurations for the affected devices.
-   Always review the generated configuration before applying it to your network.
-#}
+{
+  "id": "25119437-a41a-4221-948b-356278c76ce4",
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "created_at": "2024-10-21T20:12:15.880951Z",
+  "last_modified_at": "2024-10-21T20:12:15.880951Z",
+  "display_name": "BGP_session_remove",
+  "generators": [
+    {
+      "config_style": "junos",
+      "template_text": "{#\n   IMPORTANT: To use this configlet, you must tag the system interfaces\n   that are to be decommissioned with the tag 'decomm' in your inventory.\n   This configlet will then generate the necessary BGP configuration deletions\n   for the tagged interfaces and their corresponding BGP sessions.\n#}\n \n{# Initialize namespace for storing decommissioned IPs and ASNs #}\n{% set ns = namespace(decomm_ips=[], decomm_asn=[]) %}\n \n{# Step 1: Collect IP addresses of interfaces tagged with 'decomm' #}\n{% for ip_name, ip_data in ip.items() %}\n    {% if 'decomm' in ip_data.interface.tags %}\n        {# Add the IPv4 address of the tagged interface to our list #}\n        {% set ns.decomm_ips = ns.decomm_ips + [ip_data.ipv4_address] %}\n    {% endif %}\n{% endfor %}\n \n{# Step 2: Identify BGP sessions associated with the decommissioned IPs #}\n{% for session_name, session_data in bgp_sessions.items() %}\n    {% if session_data.source_ip in ns.decomm_ips %}\n        {# If the BGP session's source IP matches a decommissioned IP, add its destination ASN to our list #}\n        {% set ns.decomm_asn = ns.decomm_asn + [session_data.dest_asn] %}\n    {% endif %}\n{% endfor %}\n \n{# Step 3: Generate BGP configuration deletions for affected sessions #}\n{% for session_name, session_data in bgp_sessions.items() %}\n    {% if session_data.dest_asn in ns.decomm_asn %}\n        {% if session_data.role == 'leaf_evpn' %}\n            {# Delete BGP neighbor configuration for EVPN leaf nodes #}\ndelete protocols bgp group l3clos-l-evpn neighbor {{ session_data.dest_ip }}\n        {% elif session_data.role == 'leaf_spine' %}\n            {# Delete BGP neighbor configuration for leaf-spine connections #}\ndelete protocols bgp group l3clos-l neighbor {{ session_data.dest_ip }}\n        {% endif %}\n    {% endif %}\n{% endfor %}\n \n{#\n   Note: This configlet will generate 'delete' commands for BGP neighbors\n   that are connected to interfaces tagged for decommissioning. These commands\n   can be applied to remove the BGP peering configurations for the affected devices.\n   Always review the generated configuration before applying it to your network.\n#}",
+      "section": "set_based_system",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ]
+}
