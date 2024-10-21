@@ -1,0 +1,18 @@
+{
+    "id": "6bf24ecd-8d56-4822-8c58-49fcf076c4f7",
+    "ref_archs": [
+      "two_stage_l3clos"
+    ],
+    "created_at": "2024-10-21T16:07:53.487421Z",
+    "last_modified_at": "2024-10-21T20:38:41.881270Z",
+    "display_name": "Unused Interfaces Power Saving",
+    "generators": [
+      {
+        "config_style": "junos",
+        "template_text": "{% set unused_intfs = [] %}\r\n{% for iface_data in interface.values() %}\r\n    {% if iface_data['intfName'] in portSetting %}\r\n        {% continue %}\r\n    {% endif %}\r\n    {% set iface_port_settings = iface_data.get('port_setting') or {} %}\r\n    {% set parent = iface_port_settings.get('interface', {}).get('parent_breakout_interface', [])[:1] %}\r\n    {% if parent %}\r\n        {% if portSetting is defined and parent[0] not in portSetting %}\r\n            {% do unused_intfs.append(parent[0]) %}\r\n        {% endif %}\r\n    {% elif iface_data['is_standalone'] and iface_data['role'] == 'unused' and portSetting is defined and iface_data['intfName'] not in portSetting %}\r\n\t\t{% do unused_intfs.append(iface_data['intfName']) %}\r\n    {% endif %}\r\n{% endfor %}\r\n{% for intf_name in function.sorted_alphabetical(unused_intfs|unique) %}\r\n    {% if loop.first %}\r\ninterfaces {\r\n    {% endif %}\r\n    {{intf_name}} {\r\n        unused;\r\n    }\r\n    {% if loop.last %}\r\n}\r\n    {% endif %}\r\n{% endfor %}\r\n",
+        "section": "system",
+        "negation_template_text": "",
+        "filename": ""
+      }
+    ]
+  }
