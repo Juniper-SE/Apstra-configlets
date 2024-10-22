@@ -1,0 +1,18 @@
+{
+  "id": "6bf24ecd-8d56-4822-8c58-49fcf076c4f7",
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "created_at": "2024-10-21T16:07:53.487421Z",
+  "last_modified_at": "2024-10-21T20:43:36.083461Z",
+  "display_name": "Unused Interfaces Power Saving",
+  "generators": [
+    {
+      "config_style": "junos",
+      "template_text": "# Initialise an empty list to store unused interfaces\n{% set unused_intfs = [] %}\n\n# Iterate through all interfaces\n{% for iface_data in interface.values() %}\n    # Skip interfaces that are already in portSetting (these are active interfaces)\n    {% if iface_data['intfName'] in portSetting %}\n        {% continue %}\n    {% endif %}\n\n    # Get port settings for the current interface\n    {% set iface_port_settings = iface_data.get('port_setting') or {} %}\n\n    # Check if the interface is a child of a breakout interface\n    {% set parent = iface_port_settings.get('interface', {}).get('parent_breakout_interface', [])[:1] %}\n\n    {% if parent %}\n        # If it's a child interface and its parent is not in portSetting, add the parent to unused_intfs\n        {% if portSetting is defined and parent[0] not in portSetting %}\n            {% do unused_intfs.append(parent[0]) %}\n        {% endif %}\n    {% elif iface_data['is_standalone'] and iface_data['role'] == 'unused' and portSetting is defined and iface_data['intfName'] not in portSetting %}\n        # If it's a standalone interface, marked as unused, and not in portSetting, add it to unused_intfs\n\t\t{% do unused_intfs.append(iface_data['intfName']) %}\n    {% endif %}\n{% endfor %}\n\n# Generate the configuration for unused interfaces\n{% for intf_name in function.sorted_alphabetical(unused_intfs|unique) %}\n    {% if loop.first %}\n# Start the interfaces configuration block\ninterfaces {\n    {% endif %}\n    # Set each unused interface to 'unused' status\n    {{intf_name}} {\n        unused;\n    }\n    {% if loop.last %}\n# Close the interfaces configuration block\n}\n    {% endif %}\n{% endfor %}",
+      "section": "system",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ]
+}
