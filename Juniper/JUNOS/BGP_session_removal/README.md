@@ -90,6 +90,9 @@ delete protocols bgp group l3clos-l neighbor {{ session_data.dest_ip }}
 
 To use this configlet, you must tag the device that is to be decommissioned with the tag 'decomm' in your blueprint. This is crucial for the configlet to identify which BGP sessions should be removed on neighboring devices.
 
+![Screenshot 2024-10-21 at 22 08 59](https://github.com/user-attachments/assets/10d51c26-a119-4fc1-bd19-ddbafa2a46a1)
+
+
 ### Applying the System Tag
 
 1. In the blueprint, go to Staged > Physical > Topology.
