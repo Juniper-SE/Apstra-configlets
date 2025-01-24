@@ -1,0 +1,18 @@
+{
+  "id": "3cf1d4aa-5728-4290-b7f3-e2eec975bb6f",
+  "ref_archs": [
+    "two_stage_l3clos"
+  ],
+  "created_at": "2025-01-22T23:11:14.917749Z",
+  "last_modified_at": "2025-01-24T10:37:29.090602Z",
+  "display_name": "EVPNLoop",
+  "generators": [
+    {
+      "config_style": "junos",
+      "template_text": "{% for interface_name, interface_data in interface.items() %}\n    {% if interface_data.role == \"l2edge\" and interface_data.part_of == \"\" and interface_data.allowed_vlans %}\n        {% for vlan_id in interface_data.allowed_vlans %}\nset protocols loop-detect enhanced interface {{ interface_data.intfName }}.0 vlan-id {{ vlan_id }}\n        {% endfor %}\nset protocols loop-detect enhanced interface {{ interface_data.intfName }}.0 loop-detect-action interface-down\nset protocols loop-detect enhanced interface {{ interface_data.intfName }}.0 transmit-interval 1s\nset protocols loop-detect enhanced interface {{ interface_data.intfName }}.0 revert-interval 120s\n    {% endif %}\n{% endfor %}\n",
+      "section": "set_based_system",
+      "negation_template_text": "",
+      "filename": ""
+    }
+  ]
+}
