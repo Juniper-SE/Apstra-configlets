@@ -10,7 +10,7 @@ firewall {
     family any {
        filter MSEG {
 {% for all_filters in gbp_info %}
-    {% for src_tag, src_tag_filters in all_filters.iteritems() %}
+    {% for src_tag, src_tag_filters in all_filters.items() %}
         {% if src_tag not in data.src_tag_list %}
             {% set data.src_tag_list = data.src_tag_list + [src_tag] %}
         {% endif %}
